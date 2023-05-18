@@ -1,0 +1,139 @@
+server:
+  servlet-path: /*
+  servlet:
+    contextPath: /MossGateway
+  port: 7002
+spring:
+  jmx:
+    enabled: false  
+  application:
+    name: MossGateway
+  freemarker:
+    prefer-file-system-access: false
+    cache : false
+  sleuth:
+    sampler:
+      probability: 100
+  zipkin:
+    baseUrl: '${zipkinUrl}'
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  datasource:
+    url: '${platformDb}'
+    driver-class-name: '${platformDriver}'
+    hikari:      
+      idle-timeout: ${idleTimeout}
+      maximum-pool-size: ${maximumPoolSize}
+      data-source-properties:
+        prepStmtCacheSqlLimit: ${prepStmtCacheSqlLimit}
+        useServerPrepStmts: ${useServerPrepStmts}
+        prepStmtCacheSize: ${prepStmtCacheSize}
+        cachePrepStmts: ${cachePrepStmts}
+      connection-timeout: ${connectionTimeout}
+      auto-commit: ${autoCommit}
+      connection-test-query: ${connectionTestQuery}
+      pool-name: ${poolName}
+      minimum-idle: ${minimumIdle}    
+  jpa:
+    database-platform: ${dialect}
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: '${eurekaPeers}'
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true
+#    hostname: localhost
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 20
+  server:
+    wait-time-in-ms-when-sync-empty: 0
+    enableSelfPreservation: false
+security:
+  basic:
+    enable: false
+zuul:
+  sensitive-headers: Cookie,Set-Cookie  
+  routes:
+    mossauthenticateservice:
+      path: /authenticateservice/**
+      serviceId: authenticateservice
+      stripPrefix: false
+    UHIAService:
+      path: /UHIAService/**
+      serviceId: UHIAService
+      stripPrefix: false
+    elasticLog:
+      path: /elasticLog/**
+      serviceId: elasticLog
+      stripPrefix: false
+    MsitService:
+      path: /MsitService/**
+      serviceId: MsitService
+      stripPrefix: false
+    UMOSSService:
+      path: /UMOSSService/**
+      serviceId: UMOSSService
+      stripPrefix: false
+    MOSSCareService:
+      path: /MOSSCareService/**
+      serviceId: MOSSCareService
+      stripPrefix: false
+    host:
+      socket-timeout-millis: 30000
+      time-to-live: -1
+      connect-timeout-millis: 30000
+      max-per-route-connections: 30000
+      max-total-connections: 30000
+  semaphore:
+    max-semaphores: 500
+jwt:
+  header: Authorization
+  
+feign:
+  client:
+    config:
+      feignName:
+        connectTimeout: 30000
+        readTimeout: 30000
+        loggerLevel: full
+logging:
+  level:    
+    com:
+      app:
+        services:
+          security:
+            service: DEBUG
+#      zaxxer:
+#        hikari:
+#          HikariConfig: DEBUG
+#          nodeValue: DEBUG            
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 30000
+  eureka:
+    enabled: true
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
+        timeout:
+          enabled: false
